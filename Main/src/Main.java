@@ -25,13 +25,13 @@ public class Main {
 		/*Step 1.
 		 * Validate input from user.
 		 */
-		/*		if (args.length != 1) {
+		if (args.length != 1) {
 			throw new IllegalArgumentException("Specify a valid directory.");
 		}
-		 */
-		//Path path = Paths.get(args[0]); // Create Path object
+
+		Path path = Paths.get(args[0]); // Create Path object
 		//Having trouble running from commandline. 
-		Path path = Paths.get("C:\\Users\\asanchez\\Desktop\\mp3s");
+		// Path path = Paths.get("C:\\Users\\asanchez\\Desktop\\mp3s");
 
 		if (!Files.exists(path)) { // Verify path actually exists.
 			throw new IllegalArgumentException("Specifed directory does not exist: " + path);
@@ -66,7 +66,7 @@ public class Main {
 
 		//Step 4: Database. 
 		// Can probably update this to Derby on home computer.
-		try (Connection conn = DriverManager.getConnection("jdbc:h2:~/mydatabase;AUTO_SERVER=TRUE;INIT=runscript from './create.sql")) {
+		try (Connection conn = DriverManager.getConnection("jdbc:h2:~/mydatabase;AUTO_SERVER=TRUE;INIT=runscript from './create.sql'")) {
 			PreparedStatement ps = conn.prepareStatement("INSERT INTO Songs (artist, year, album, title) VALUES (?, ?, ?, ?)");
 
 			for(Song s : songs) {
@@ -78,7 +78,7 @@ public class Main {
 			}
 
 			int[] rows = ps.executeBatch();
-			System.out.println("Number of rows inserted: " + Arrays.toString(rows));			
+			System.out.println("Number of rows inserted: " + rows.length);			
 		}
 
 		//Step 5: Start HTTP Server - Part 1
@@ -89,44 +89,42 @@ public class Main {
 		context.setContextPath("/");
 		context.setResourceBase(System.getProperty("java.io.tmpdir"));
 		server.setHandler(context);
-		
+
 		context.addServlet(SongServlet.class, "/songs");
 		server.start();
-		
+
+		// Check if program is running on a desktop, and if so, open up a browser on localhost:8080/songs
 		if (Desktop.isDesktopSupported()) {
 			Desktop.getDesktop().browse(new URI("http://localhost:8080/songs"));
 		}
-		
-		
-
 	}
-	
+
 	//Step 5 : Write a servlet - Part 2
-	
+
 	public static class SongServlet extends HttpServlet {
-		
+
 		//Method which responds to HTTP GET calls (from the browser) on the path your servlet is registered to.
-		protected void doGet(HttpServlet req, HttpServletResponse resp ) throws IOException {
+		protected void doGet(HttpServletRequest req, HttpServletResponse resp ) throws IOException {
 			StringBuilder builder = new StringBuilder();
-			
+
 			try (Connection conn = DriverManager.getConnection("jdbc:h2:~/mydatabase")){
 				Statement stat = conn.createStatement();
 				ResultSet rs = stat.executeQuery("SELECT * FROM Songs");
-				
+
 				while(rs.next()) {
 					builder.append("<tr class=\"table\">")
-							.append("<td>").append(rs.getString("year")).append("</td>")
-							.append("<td>").append(rs.getString("artist")).append("</td>")
-							.append("<td>").append(rs.getString("album")).append("</td>")
-							.append("<td>").append(rs.getString("title")).append("</td>")
-							.append("</tr>");
-							
+					.append("<td>").append(rs.getString("year")).append("</td>")
+					.append("<td>").append(rs.getString("artist")).append("</td>")
+					.append("<td>").append(rs.getString("album")).append("</td>")
+					.append("<td>").append(rs.getString("title")).append("</td>")
+					.append("</tr>");
+
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			String string = "<html><h1>Yours Songs</h1><table><tr><th>Year</th><th>Artist</th><th>Album</th><th>Title</th></tr>" + builder.toString() + "</table></html>";
+			String string = "<html><h1>Your Songs</h1><table><tr><th>Year</th><th>Artist</th><th>Album</th><th>Title</th></tr>" + builder.toString() + "</table></html>";
 			resp.getWriter().write(string);
 		}
 	}

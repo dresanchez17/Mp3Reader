@@ -2,6 +2,14 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="/home/asanchez/JARHome/mp3agic-0.9.0.jar"/>
+	<classpathentry kind="lib" path="lib/mp3agic-0.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-server-9.4.24.v20191120.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-servlet-9.4.24.v20191120.jar"/>
+	<classpathentry kind="lib" path="lib/servlet-api-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-util-9.4.24.v20191120.jar"/>
+	<classpathentry kind="lib" path="lib/h2.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-http-9.4.24.v20191120.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-io-9.4.24.v20191120.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-security-9.4.24.v20191120.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
